@@ -1,0 +1,260 @@
+Core Security - Corelabs Advisory
+http://corelabs.coresecurity.com/
+
+SAP Note Assistant Insecure handling of SAP Notes signature vulnerability
+
+
+
+1. *Advisory Information*
+
+Title: SAP Note Assistant Insecure handling of SAP Notes signature vulnerability
+Advisory ID: CORE-2017-0011
+Advisory URL: http://www.coresecurity.com/advisories/SAP-Note-Assistant-Insecure-handling-of-SAP-Notes-signature-vulnerability
+Date published: 2017-11-30
+Date of last update: 2017-11-27
+Vendors contacted: SAP
+Release mode: Coordinated release
+
+
+
+2. *Vulnerability Information*
+
+Class: Improper Verification of Cryptographic Signature [CWE-347], Improper Limitation of a Pathname to a Restricted Directory [CWE-22]
+Impact: Code execution
+Remotely Exploitable: Yes
+Locally Exploitable: Yes
+CVE Name: CVE-2017-16691
+
+
+
+3. *Vulnerability Description*
+
+
+          SAP distributes program fixes in so called SAP Notes. A component, called
+          SAP Note Assistant [1] is available to assist on managing and installing SAP
+          Notes on SAP Netweaver Application Server systems. In September 2017, a new
+          functionality [2][3] was introduced in SAP Note Assistant that enabled the
+          tool to validate the signature of SAP Notes archive files and thus increase
+          the security of the SAP Notes installation process.
+
+
+
+          A vulnerability was found in the way the signature validation is performed that
+          could led to privilege escalation scenarios.
+
+
+
+4. *Vulnerable Packages*
+
+   . SAP Note Assistant with security note 2408073
+Other products and versions might be affected, but they were not tested.
+
+
+5. *Vendor Information, Solutions and Workarounds*
+
+
+      SAP published the following Security Notes:
+
+
+   . 2546220
+
+          As a workaround, we suggest performing a signature validation on SAP Note
+          archive files before extracting them or uploading them to SAP Note Assistant.
+          This can be achieved by using the SAPCAR tool "-tvV" flags. If extraction of
+          untrusted or potentially insecure archive files is requires it's recommended
+          to extract them on a temporary directory using the "-flat" option.
+
+
+
+6. *Credits*
+
+
+          This vulnerability was discovered and researched by
+          Martin Gallo
+          from Core Security Consulting Services. The publication of this advisory was coordinated by
+          Alberto Solino
+          from Core Advisories Team.
+
+
+
+7. *Technical Description / Proof of Concept Code*
+
+[CVE-2017-16691]: According to the documentation in SAP Note 2408073 [4], the process that SAP
+          Note Assistant performs in order to verify the signature of uploaded SAR files
+          is as follows:
+
+
+
+          1. The SAP Note file is copied into an application server directory for
+          temporary files ($(DIR_TRANS)/tmp) (e.g. /usr/sap/trans/tmp).
+
+
+
+          2. Checking for signature type (SAP software) and the signature issuer (SAP
+          Trust Community),
+
+
+
+          However, it was found that the process for verifying the signature of the SAP
+          Note archive file is implemented using the SAPCAR tool [5] in a single step by
+          extracting the files from the archive file to the temporary directory and
+          verifying the signature. This is performed by using the "-xvV" flags of the
+          SAPCAR tool.
+
+
+
+          As the SAPCAR tool extracts relative and absolute paths by default [6], it would
+          be possible for an attacker to craft a SAR archive file that contains
+          filenames pointing to directories outside the temporary directory
+          (e.g. "../../../home/<sid>adm/.ssh/.authorized_keys"). The SAP Note Assistant
+          will extract the files, overwriting files outside the temporary directory,
+          and then perform the signature validation.
+
+
+
+          The following code using the pysap library [7] can be used to tamper with the
+          example archive file provided in SAP Note 2408073 [3] ("0002424539_00.SAR")
+          and include such type of relative filenames:
+
+
+
+/-----
+$ echo "This is a file that is not signed and will be written outside the temporary directory" >tamper.txt
+$ pip install pysap
+$ python
+Python 2.7.12 (default, Jul  1 2016, 15:12:24)
+[GCC 5.4.0 20160609] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from pysap.SAPCAR import *
+>>> ar = SAPCARArchive("0002424539_00.SAR", "r+")
+>>> ar.add_file("tamper.txt", "../tamper.txt")
+>>> ar.write()
+>>> ar.files
+{'../tamper.txt': <pysap.SAPCAR.SAPCARArchiveFile at 0x7f501f678a90>,
+ './/0002424539_00.ZIP': <pysap.SAPCAR.SAPCARArchiveFile at 0x7f501f678f50>,
+ 'SIGNATURE.SMF': <pysap.SAPCAR.SAPCARArchiveFile at 0x7f501f678f10>}
+>>> exit
+
+-----/
+
+
+          It's also worth noticing that the deletion of the files in the temporary
+          directory by SAP Note Assistant only takes into account the archive file,
+          the signature file and the zip file. Other files not expected to be included
+          in the archive file are not deleted.
+
+
+
+          In addition, it's worth mentioning that signature validation doesn't prevent
+          vulnerabilities affecting the SAPCAR tool (such as [8]) to be triggered, as
+          the signature file need to be extracted from the archive file in order to the
+          validation to be performed.
+
+
+
+8. *Report Timeline*
+. 2017-10-05:
+Core Security
+                sent an initial notification to SAP, including a draft advisory.
+
+
+. 2017-10-06:
+
+                SAP confirmed the reception of the advisory and assigned the incident ticket 1770463888 for tracking this issue. They will
+                answer back once the team analyze the report.
+
+
+. 2017-11-13:
+
+                SAP informed the availability of a patch for the reported issue that will be published in October 14th, with security note
+                2546220. SAP will be disclosing the advisory in February 14th, 2018.
+
+
+. 2017-11-14:
+Core Security
+                acknowledged SAP's email and expressed concerns about the coordinated vulnerability process handled by SAP, since there was
+                no communication whatsoever, just a 1-day notice about availability of the patch.
+                Core Security
+                requested the CVE-ID assigned to this issue in order to publish the advisory as soon as possible.
+
+
+. 2017-11-21:
+Core Security asked again for the CVE-ID assigned to the reported vulnerability in order to publish the advisory.
+
+
+. 2017-11-22:
+
+                SAP answered saying they have planned to assign CVE IDs to vulnerabilities reported starting in December Patch Day, and said if we are still in need of a CVE ID to please let them know.
+
+
+. 2017-11-22:
+Core Security answered saying SAP is already listed as CNAs, meaning they are responsible of issuing CVE-IDs for the vulnerabilities reported. Also answered that yes, we are still in need of a CVE-ID.
+
+
+. 2017-11-30:
+
+                Advisory
+                CORE-2017-0011
+                published.
+
+
+
+9. *References*
+
+[1] https://support.sap.com/en/my-support/knowledge-base/note-assistant.html
+[2] https://blogs.sap.com/2017/09/12/enable-note-assistant-to-support-digitally-signed-sap-notes/
+[3] https://launchpad.support.sap.com/#/notes/0002408073
+[4] https://launchpad.support.sap.com/applications/nnfv2/services/bsp/sap/support/sapnotes/public/services/attachment.htm?iv_key=012006153200001657472016&iv_version=0003&iv_guid=6EAE8B27FE511ED7A0B488C1A6E2A0C7
+[5] https://launchpad.support.sap.com/#/softwarecenter/template/products/_APP=00200682500000001943&_EVENT=DISPHIER&HEADER=N&FUNCTIONBAR=Y&EVENT=TREE&TMPL=INTRO_SWDC_SP_AD&V=MAINT&REFERER=CATALOG-PATCHES&ROUTENAME=products/By%20Category%20-%20Additional%20Components
+[6] https://www.coresecurity.com/corelabs-research/publications/deep-dive-sap-archive-file-formats
+[7] https://github.com/CoreSecurity/pysap
+[8] https://www.coresecurity.com/advisories/sap-sapcar-heap-based-buffer-overflow-vulnerability
+
+
+10. *About CoreLabs*
+
+CoreLabs, the research center of Core Security, is charged with anticipating
+      the future needs and requirements for information security technologies.
+      We conduct our research in several important areas of computer security
+      including system vulnerabilities, cyber attack planning and simulation,
+      source code auditing, and cryptography. Our results include problem
+      formalization, identification of vulnerabilities, novel solutions and
+      prototypes for new technologies. CoreLabs regularly publishes security
+      advisories, technical papers, project information and shared software
+      tools for public use at:
+      http://corelabs.coresecurity.com.
+
+
+
+11. *About Core Security*
+
+
+          Core Security provides companies with the security insight
+          they need to know who, how, and what is vulnerable in their
+          organization. The company's threat-aware, identity & access,
+          network security, and vulnerability management solutions
+          provide actionable insight and context needed to manage
+          security risks across the enterprise. This shared insight
+          gives customers a comprehensive view of their security posture
+          to make better security remediation decisions. Better insight
+          allows organizations to prioritize their efforts to protect
+          critical assets, take action sooner to mitigate access risk,
+          and react faster if a breach does occur.
+
+
+
+          Core Security is headquartered in the USA with offices and
+          operations in South America, Europe, Middle East and Asia. To
+          learn more, contact Core Security at (678) 304-4500 or
+          info@coresecurity.com
+
+
+
+12. *Disclaimer*
+
+
+      The contents of this advisory are copyright
+      (c) 2017 Core Security and (c) 2017 CoreLabs,
+      and are licensed under a Creative Commons
+      Attribution Non-Commercial Share-Alike 3.0 (United States) License:
+      http://creativecommons.org/licenses/by-nc-sa/3.0/us/
