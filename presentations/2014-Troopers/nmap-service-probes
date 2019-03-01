@@ -1,0 +1,179 @@
+# This is a collection of nmap service probes for matching SAP services.
+#
+# Author: Martin Gallo <mgallo@coresecurity.com>
+#
+
+
+# This is the NULL probe that just compares any banners given to us
+##############################NEXT PROBE##############################
+Probe TCP NULL q||
+# Wait for at least 6 seconds for data.  It used to be 5, but some
+# smtp services have lately been instituting an artificial pause (see
+# FEATURE('greet_pause') in Sendmail, for example)
+totalwaitms 6000
+
+#
+# SAP Router service/NI Protocol
+#
+# An Error Information packet is sent when the connection timeout or when
+# a route request is not received within a certain amount of time.
+#
+# Relevant fields are shown next (using pysap [1]):
+#
+# ###[ SAP NI (Network Interface) protocol ]###
+#  length    = 241										--> Variable field
+# ###[ SAP Router ]###
+#     type      = 'NI_RTERR'
+#     version   = 40									--> Protocol version, variable
+#     opcode    = Error information
+#     opcode_padd= 0
+#     return_code= Time limit reached (NIETIMEOUT)
+#     err_text_length= 217								--> Variable field
+#     err_text_value= ['*ERR*', '1', 'connection timed out',
+#					   '-5', 'NI (network interface)',
+#					   '720',							--> Release version
+#					   '40', 							--> Protocol version
+#					   'nirout.cpp', '6695',    		--> Line #, variable
+#					   'RTPENDLIST::timeoutPend: no route received within 5s (CONNECTED)',
+#					   'Tue Mar  4 20:19:08 2014', '', '', '', --> Date, variable
+#					   '5',
+#					   "SAProuter 40.4 on 'martin-laptop'",	--> Hostname
+#					   '', '', '', '', '*ERR*', '', '', '', '']
+#
+# More information on the protocol at [2] and [3].
+#
+# [1] http://corelabs.coresecurity.com/index.php?module=Wiki&action=view&type=tool&name=pysap
+# [2] http://help.sap.com/saphelp_nw04/helpdata/en/59/77509b69d64729b192c460f2a1f0f8/content.htm
+# [3] http://corelabs.coresecurity.com/index.php/?module=Wiki&action=view&type=publication&name=saps_network_protocols_revisited
+#
+match saprouter m|^\0\0\0.NI_RTERR\0.\0\0\xff\xff\xff\xfb\0\0\0.\*ERR\*\x001\0connection timed out\0-5\0NI \(network interface\)\x00(\d\d\d)\x00\d\d\0nirout\.cpp\x00\d\d\d\d\0RTPENDLIST::timeoutPend: no route received within \ds \(CONNECTED\)\0\w+ +\w+ +\d+ +\d+:\d+:\d+ +\d+\0\0\0\0+\d+\0SAProuter ([\w._ ()-]+) on '([\w._-]+)'\0\0\0\0\0\*ERR\*\0\0\0\0\0|s p/SAP Router/ v/release $1, version $2/ h/$3/
+match saprouter m|^\0\0\0.NI_RTERR\0.\0\0\xff\xff\xff\xfb\0\0\0.\*ERR\*\x001\0connection timed out\0-5\0NI \(network interface\)\x00(\d\d\d)\x00\d\d\0nirout\.cpp\x00\d\d\d\d\0RTPENDLIST::timeoutPend: CONNECTED timeout\0\w+ +\w+ +\d+ +\d+:\d+:\d+ +\d+\0\0\0\0+\d+\0SAProuter ([\w._ ()-]+) on '([\w._-]+)'\0\0\0\0\0\*ERR\*\0\0\0\0\0|s p/SAP Router/ v/release $1, version $2/ h/$3/
+
+
+##############################NEXT PROBE##############################
+#
+# SAP Network Interface Null probe
+#
+# We send a NI valid packet with the length set to 0.
+# 
+Probe TCP SAPNINull q|\0\0\0\0|
+ports 3200-3297
+
+#
+# SAP Dispatcher service/Diag Protocol
+#
+# When the connection timeout, the service sends an error packet. The packet
+# it's always the same. This probe serves only for a soft-match, as the
+# response doesn't contain information about the server's version.
+# 
+# More information about the protocol at [2].
+#
+# [1] http://corelabs.coresecurity.com/index.php?module=Wiki&action=view&type=tool&name=pysap
+# [2] http://corelabs.coresecurity.com/index.php?module=Wiki&action=view&type=publication&name=Uncovering_SAP_vulnerabilities_reversing_and_breaking_the_Diag_protocol
+#
+softmatch sap-gui m|^\0\0\0\x0e\*\*DPTMMSG\*\*\0\0\xf8| p/SAP Dispatcher/
+
+
+##############################NEXT PROBE##############################
+#
+# SAP Diag Init Probe
+#
+# We send a Diag initialization packet containing all the required fields to
+# grab the login screen. The packet can be build using pysap [1] as follows:
+#
+# 	SAPNI()/SAPDiagDP()/SAPDiag(com_flag_TERM_INI=1)/ \
+#	user_connect_uncompressed/support_data
+#
+# In the response we're looking at the following Diag Items:
+#	APPL, ST_R3INFO, DBNAME
+#	APPL, ST_R3INFO, CPUNAME
+#	APPL, ST_R3INFO, KERNELVERSION
+#
+# More information about the protocol at [2].
+#
+# [1] http://corelabs.coresecurity.com/index.php?module=Wiki&action=view&type=tool&name=pysap
+# [2] http://corelabs.coresecurity.com/index.php?module=Wiki&action=view&type=publication&name=Uncovering_SAP_vulnerabilities_reversing_and_breaking_the_Diag_protocol
+#
+Probe TCP SAPDiagInit q|\x00\x00\x01\x06\xff\xff\xff\xff\n\x00\x00\x00\x00\x00\x00\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff>\x00\x00\x00\x00\xff\xff\xff\xff\xff\xff                                        \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00                    \x00\x00\x00\x00\x00\x00\x00\x00\xff\xff\xff\xff\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00\x10\x04\x02\x00\x0c\x00\x00\x00\x80\x00\x00\x04L\x00\x00\x13\x89\x10\x04\x0b\x00 \xff\x7f\xfe-\xda\xb77\xd6t\x08~\x13\x05\x97\x15\x97\xef\xf2?\x8d\x07p\xff\x0f\x00\x00\x00\x00\x00\x00\x00\x00|
+ports 3200-3299
+
+match sap-gui m|^\x00\x00..\x00\x00\x11\x00\x00\x01\x00\x00.*\x10\x06\x02..(\w\w\w).*\x10\x06\x03..([\w._-]+).*\x10\x06\x29..(\d+)\x00(\d+)\x00(\d+)\x00|s p/SAP Dispatcher/ i/DB name $1/ h/$2/ v/release $4, patch level $5, database release $3/
+
+
+##############################NEXT PROBE##############################
+#
+# SAP Message Server Probe
+#
+# We send an request to dump the release information of the Message Server.
+# If the port reached is the external one, the server respond with an error
+# packet. This allow us to perform only a soft-match as the packet doesn't
+# contain any version information. If the port reached is the internal, the
+# server dumps information about the server release version. The packet can
+# be build using pysap [1] as follows:
+#
+# 	SAPNI()/SAPMS(flag=0x02, iflag=0x01, fromname="-", toname="MSG_SERVER",
+#	opcode=0x1e, dump_dest=2, dump_command=8, dump_name="-")
+#
+# In the response we only need to look for the eye-catcher string as a soft
+# match. For the complete match, we look at the release version, patch level,
+# database version and system number. 
+#
+# More information about the protocol at [2].
+#
+# [1] http://corelabs.coresecurity.com/index.php?module=Wiki&action=view&type=tool&name=pysap
+# [2] http://corelabs.coresecurity.com/index.php/?module=Wiki&action=view&type=publication&name=saps_network_protocols_revisited
+#
+Probe TCP SAPMSDumpRelease q|\x00\x00\x00\xa2**MESSAGE**\x00\x04\x00MSG_SERVER\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x01-\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x1e\x00\x01\x03\x02\x00\x00\x00\x00\x00\x00\x08-\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00|
+ports 3600-3699,3900-3999
+
+match sapms m|^....\*\*MESSAGE\*\*.*Release no = (\d+).*System name = (\w+).*patch number = (\d+)|s p/SAP Message Server/ i/instance $2/ v/release $1, patch level $3/
+
+match sapms m|^\x00\x00..\*\*MESSAGE\*\*|s p/SAP Message Server/
+
+
+##############################NEXT PROBE##############################
+#
+# SAP Gateway service/RFC protocol probe
+#
+# We send a request to initiate a RFC connection, as a "normal client", and
+# using an empty string as the service name. The server's response is a 
+# similar packet with the service name reflected. The packet can be build
+# using pysap [1] as follows:
+#
+#	SAPNI()/SAPRFC(req_type=3)
+#
+# In the response we only look for matching the up to the index field.
+#
+# More information about the protocol at [2].  
+#
+# [1] http://corelabs.coresecurity.com/index.php?module=Wiki&action=view&type=tool&name=pysap
+# [2] http://corelabs.coresecurity.com/index.php/?module=Wiki&action=view&type=publication&name=saps_network_protocols_revisited
+#
+Probe TCP SAPRFC q|\x00\x00\x00P\x03\x03\x00\x00\x00\x00\x00\x00\x00\x00          1100\x00\x00\x00\x00\x00\x00                        \x06\xcb\xff\xff\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00|
+ports 3300-3399
+
+match sapgw m|\x00\x00...\x03\x00\x00\x00\x00\x00\x00\x00\x00          \d\d\d\d\x00\x00\x00\x00\x00\x00                        ..\xff\xff|s p/SAP Gateway Service/
+
+
+##############################NEXT PROBE##############################
+#
+# SAP Enqueue Server Protocol probe
+#
+# We send a Connection Admin request for setting the server name parameter.
+# The server's response include the name of the Enqueue Server instance. The
+# request packet can be build using pysap [1] as follows:
+#
+# 	SAPNI()/SAPEnqueue(dest=6, opcode=1, params=[SAPEnqueueParam(param=3)])
+#
+# In the response we look for matching the magic bytes and look at the 
+# parameter response for the server's name.
+#
+# More information about the protocol at [2].
+#
+# [1] http://corelabs.coresecurity.com/index.php?module=Wiki&action=view&type=tool&name=pysap
+# [2] http://corelabs.coresecurity.com/index.php/?module=Wiki&action=view&type=publication&name=saps_network_protocols_revisited
+# 
+Probe TCP SAPEnqueue q|\x00\x00\x00\x1d\xab\xcd\xe1#\x00\x00\x00\x00\x00\x00\x00\x1d\x00\x00\x00\x1d\x06\x01\x00\x00\x00\x00\x00\x01\x00\x00\x00\x03\x00|
+ports 3200-3299
+
+match sap-gui m|\x00\x00..\xab\xcd\xe1#\x00\x00\x00\x00........\x06\x02\x00\x02\x00\x00\x00\x01\x00\x00\x00\x03([\w.-]+)_IOThread_.*\x00|s p/SAP Enqueue Server/ h/$1/
