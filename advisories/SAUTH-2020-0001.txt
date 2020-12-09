@@ -1,0 +1,388 @@
+SecureAuth - Innovation Labs Advisory
+http://www.secureauth.com/
+
+SAP HANA SAML Assertion Improper Validation Vulnerability
+
+
+
+1. *Advisory Information*
+
+Title: SAP HANA SAML Assertion Improper Validation Vulnerability
+Advisory ID: SAUTH-2020-0001
+Advisory URL: https://www.secureauth.com/labs/advisories/sap-hana-saml-assertion-improper-validation-authentication
+Date published: 2020-12-08
+Date of last update: 2020-12-08
+Vendors contacted: SAP
+Release mode: Coordinated release
+
+
+
+2. *Vulnerability Information*
+
+Class: Improper Authentication [CWE-287]
+Impact: Security bypass
+Remotely Exploitable: Yes
+Locally Exploitable: Yes
+CVE Name: CVE-2020-26834
+
+
+
+3. *Vulnerability Description*
+
+
+        SAP HANA[1] is an in-memory database engine and application server developed
+        by SAP[2]. The HANA database allows connections to the database using a
+        proprietary protocol called HANA SQL Command Network Protocol[3], as well as
+        through the standard HTTP protocol to XS and XS Advanced applications.
+        Connections to the database are authenticated using different mechanisms,
+        which include the integration with multiple Single Sign-On (SSO)
+        environments through a variety of protocols[4].
+    
+
+
+        A vulnerability was found in the implementation of Security Assertion
+        Markup Language (SAML)[5] authentication mechanism[6], that can lead to
+        improper authentication or authentication bypass scenarios.
+    
+
+
+4. *Vulnerable Packages*
+
+   . SAP HANA 2.0 SPS03 and SPS04
+   . Other versions are probably affected too, but they were not checked
+
+5. *Vendor Information, Solutions and Workarounds*
+
+
+      SAP published Security Note 2978768[7] that fixed the reported vulnerability.
+      The following are potential workarounds we have identified to mitigate or reduce the exploitability
+      of the vulnerability found:
+    
+
+   . 
+          If possible, disable SAP HANA's automatic user creation of unknown users with SAML providers.
+        
+   . 
+          If possible, configure the IdP to issue SAML Assertions using canonicalization methods that include
+          comments.
+        
+   . 
+          Make sure TLS is enforced when authenticating to the database or XS(A) applications with SAML.
+        
+
+
+6. *Credits*
+
+
+      The vulnerability was discovered and researched by Martin Gallo from SecureAuth Innovation Labs team.
+      The publication of this advisory was coordinated by Leandro Cuozzo from SecureAuth Innovation Labs team.
+    
+
+
+7. *Technical Description / Proof of Concept Code*
+
+
+        The Security Assertion Markup Language (SAML) is a standard for exchanging
+        authentication information between different components[5]. The SAP HANA
+        database can be integrated with a SAML-based environment, in order to
+        authenticate users accessing SAP HANA via the SQL interface directly
+        (for example, clients using JDBC and ODBC interfaces)[6] or via HTTP to
+        XS and XS Advanced applications.
+      
+
+
+        In this integration scenario, SAP HANA will accept authentication requests
+        containing SAML 2.0 assertions obtained by the client from an Identity
+        Provider (IdP) trusted by the SAP HANA instance, acting as a Service
+        Provider (SP). The trust relationship between the SAP HANA instance and
+        the SAML IdP is established by creating a "SAML Provider" entity in the
+        database and assigning the corresponding X.509 certificate to the
+        provider, either via an in-memory certificate collection or a PSE stored
+        in the file system.
+      
+
+
+        In this scenario, it's the client responsibility to handle the process of
+        obtaining signed SAML Assertion with the IdP. When authenticating a user
+        to access the HANA database, the client presents the signed SAML bearer
+        assertion. The HANA database validates the assertion and its signature
+        before granting access to the user.
+      
+
+
+        A vulnerability was found in the process implemented in SAP HANA for
+        validating the SAML Assertion and its signature.
+      
+
+
+7.1. *SAML Assertion Improper Validation Vulnerability*
+
+[CVE-2020-26834]
+        When configured to authenticate database users with SAML, SAP HANA
+        supports either plain SAML 2.0 bearer Assertions or unsolicited SAML
+        Response elements that include an unencrypted SAML Assertion. In both
+        cases, the SAML Assertion should be signed using XML signatures.
+        A couple of SAML Assertion properties are evaluated by SAP HANA in order
+        to log users in. In particular, the user is determined via the SAML's
+        <Subject> <NameID> element. This element is part of the Assertion and thus
+        covered by the digital signature, which provides integrity protection.
+        It's also possible to map different users' identifiers, and
+        that mapping can be performed by SAP HANA or provided by the IdP. In the
+        latter, the mapping is specified in the SAML Assertion with the inclusion
+        of the <@SPProvidedID> attribute of the <NameID> element.
+      
+
+
+        The following is an example SAML Assertion that can be used to authenticate
+        to the SAP HANA's SQL interface, or used as part of SAML's HTTP-POST bindings:
+      
+
+
+/-----
+         <saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="XXX" Version="2.0" IssueInstant="2020-08-26T01:01:48Z">
+          <saml:Issuer>idp.example.com</saml:Issuer>
+          <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+            <SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#">
+              <CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+              <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+              <Reference URI="#XXX">
+                <Transforms>
+                  <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+                  <Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                </Transforms>
+                <DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#md5"/>
+                <DigestValue>Q1i5sVvY8SUgOQ+x08Ndzg==</DigestValue>
+              </Reference>
+            </SignedInfo>
+            <ds:SignatureValue>ozJcoNBnCnUsXtm3IR[..]8AswwSawGLNHyw==</ds:SignatureValue>
+            <ds:KeyInfo>
+              <ds:X509Data>
+                <ds:X509Certificate>MIIDGzCCAgOgAwIBAgIUCW6wn8S5Jc[..]ViTdpS6r5/twLsfOQ==</ds:X509Certificate>
+              </ds:X509Data>
+            </ds:KeyInfo>
+          </ds:Signature>
+          <saml:Subject>
+            <saml:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">alice.cooper</saml:NameID>
+            <saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer"/>
+          </saml:Subject>
+          <saml:Conditions NotBefore="2020-08-26T01:01:48Z" NotOnOrAfter="2020-08-27T01:01:48Z"/>
+        </saml:Assertion> 
+-----/
+
+
+        This vulnerability in SAP HANA is due to an inconsistency in the way the
+        XML elements are traversed and how comment nodes are handled. Because of the
+        canonicalization process of the XML elements prior to the signature validation,
+        inserting XML comment nodes does not invalidate a SAML Assertion signature.
+        However, the assertion validation code improperly accesses the content of the
+        <NameID> element. If the XML element contains comment nodes, the text after the
+        comment is not considered.
+      
+
+
+        An attacker who manages to obtain a signed SAML assertion, either by having
+        valid access to authenticate against the SAML IdP trusted by SAP HANA, or by
+        obtaining a signed SAML Assertion emitted to another user, can them tamper with
+        the signed SAML Assertion and change the subject user. As an example, in the
+        case where a SAML Assertion was issued for the user "alice.cooper", the attacker
+        would be able to insert comments into the SAML Assertion and have it to work
+        to access as "alice".
+      
+
+
+        The next code block shows a tampered SAML Assertion that illustrates how the
+        vulnerability can be exploited to get access as a different user account:
+      
+
+
+/-----
+        <saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="XXX" Version="2.0" IssueInstant="2020-08-26T01:01:48Z">
+          <saml:Issuer>idp.example.com</saml:Issuer>
+          <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+            <SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#">
+              <CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+              <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+              <Reference URI="#XXX">
+                <Transforms>
+                  <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+                  <Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                </Transforms>
+                <DigestMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#md5"/>
+                <DigestValue>Q1i5sVvY8SUgOQ+x08Ndzg==</DigestValue>
+              </Reference>
+            </SignedInfo>
+            <ds:SignatureValue>ozJcoNBnCnUsXtm3IR[..]8AswwSawGLNHyw==</ds:SignatureValue>
+            <ds:KeyInfo>
+              <ds:X509Data>
+                <ds:X509Certificate>MIIDGzCCAgOgAwIBAgIUCW6wn8S5Jc[..]ViTdpS6r5/twLsfOQ==</ds:X509Certificate>
+              </ds:X509Data>
+            </ds:KeyInfo>
+          </ds:Signature>
+          <saml:Subject>
+            <saml:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">alice<!--->.cooper</saml:NameID>
+            <saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer"/>
+          </saml:Subject>
+          <saml:Conditions NotBefore="2020-08-26T01:01:48Z" NotOnOrAfter="2020-08-27T01:01:48Z"/>
+        </saml:Assertion> 
+-----/
+
+
+        Note that as mentioned, even when the signature value has been redacted for
+        readability reasons, there was no need to adjust nor re-sign the SAML Assertion.
+        The code responsible for validating the signature will strip out the comments
+        during the canonicalization and consider the <NameID> value as "alice.cooper",
+        while due to the vulnerability the code in charge of validating the assertion
+        will take only "alice" as the <NameID> value and grant access to this user
+        account instead.
+      
+
+
+        It's also worth mentioning that the SAML Provider can be configured in HANA to
+        automatically provision new users when they are not found in the database[8].
+        In this case, the abuse of the vulnerability can allow accessing the database
+        with a low-privilege role even if there're no matching users already created in
+        the database.
+      
+
+
+8. *Report Timeline*
+. 2020-08-28:
+
+            SecureAuth sent an initial notification to SAP.
+      
+
+. 2020-08-31:
+
+            SAP confirmed the reception of the advisory and informed they
+            would submit it to the relevant internal team for validation.
+      
+
+. 2020-09-11:
+
+            SAP confirmed one of the reported vulnerabilities (7.1) and informed
+            us that the fix would be available at the end of November. Additionally,
+            they notified us that the second and the third vulnerability were
+            under revision.
+      
+
+. 2020-09-15:
+
+            SecureAuth acknowledged the confirmation and replied with more
+            information to clarify the situation of the two remaining
+            vulnerabilities.
+      
+
+. 2020-09-16:
+
+            SAP received our notification and informed us that they would
+            analyze the new information.
+      
+
+. 2020-10-02:
+
+            SecureAuth asked for an update.
+      
+
+. 2020-10-07:
+
+            SAP answered confirming the third vulnerability (7.3). However,
+            they haven't yet decided whether this vulnerability will be a security
+            note or a functional note. A similar evaluation is being carried out
+            for vulnerability 7.2.
+      
+
+. 2020-10-13:
+
+            SecureAuth thanked the update and clarified that we considered
+            7.2 as a vulnerability.
+      
+
+. 2020-11-02:
+
+            SecureAuth requested an update.
+      
+
+. 2020-11-09:
+
+            SAP informed us they were still working on the fixes and they
+            aren't going to release the patch in the security patch day of
+            November 10th.
+      
+
+. 2020-12-02:
+
+            SecureAuth requested an update.
+      
+
+. 2020-12-04:
+
+            SAP informed us they will be publishing a security note "soon" for vulnerability 7.1 and releasing the
+            solutions for the other reported issues next year.
+      
+
+. 2020-12-04:
+
+            SecureAuth thanked the update and asked whether or not there's a target date for the security
+            note to be released "soon".
+      
+
+. 2020-12-07:
+
+            SAP informed us the security note is expected to be released Dec 8th.
+      
+
+. 2020-12-08:
+
+            Advisory SAUTH-2020-0001 published.
+      
+
+
+9. *References*
+
+[1] https://www.sap.com/products/database-data-management.html
+[2] https://sap.com/
+[3] https://help.sap.com/viewer/7e4aba181371442d9e4395e7ff71b777/2.0.03/en-US/d5b80175490741adbf1a1ba5ec8f2695.html
+[4] https://sap.com/
+[5] https://www.oasis-open.org/committees/security/
+[6] https://help.sap.com/viewer/b3ee5778bc2e4a089d3299b82ec762a7/2.0.05/en-US/db6db355bb571014b56eb25057daec5f.html
+[7] https://launchpad.support.sap.com/#/notes/2978768
+[8] https://help.sap.com/viewer/4fe29514fd584807ac9f2a04f6754767/2.0.05/en-US/20d4cca075191014824eeda2cbba6445.html
+
+
+10. *About Innovation Labs*
+
+
+      SecureAuth Innovation Labs, the research arm of SecureAuth Corporation, is charged
+      with anticipating the future needs and requirements for information security
+      technologies. We conduct research in several important areas of computer
+      security, including identity-related attacks, system vulnerabilities and
+      cyber-attack planning. Research includes problem formalization, identification
+      of vulnerabilities, novel solutions and prototypes for new technologies. We
+      regularly publish security advisories, primary research, technical publications,
+      research blogs, project information, and shared software tools for public use at
+      http://www.secureauth.com/labs.
+    
+
+
+11. *About SecureAuth*
+
+
+        SecureAuth is an identity security company that enables the most secure and
+        flexible authentication experience for employees, partners and customers.
+        Delivered as a service and deployed across cloud, hybrid and on-premises environments,
+        SecureAuth manages and protects access to applications, systems and data at scale,
+        anywhere in the world. The company provides the tools to build identity security into
+        new and existing applications and workflows without impacting user experience or engagement,
+        resulting in increased productivity and reduced risk.
+        To learn more, visit
+      www.secureauth.com, call (866) 859-1526, or email us at
+      info@secureauth.com
+
+
+12. *Disclaimer*
+
+
+      The contents of this advisory are copyright (c) 2020
+      SecureAuth, and are licensed under a Creative Commons Attribution
+      Non-Commercial Share-Alike 3.0 (United States) License:
+      http://creativecommons.org/licenses/by-nc-sa/3.0/us/
