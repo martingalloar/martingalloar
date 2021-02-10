@@ -1,17 +1,17 @@
 SecureAuth - Innovation Labs Advisory
 http://www.secureauth.com/
 
-SAP HANA SAML Assertion Improper Validation Vulnerability
+SAP HANA SAML Improper Validation Vulnerabilities
 
 
 
 1. *Advisory Information*
 
-Title: SAP HANA SAML Assertion Improper Validation Vulnerability
+Title: SAP HANA SAML Improper Validation Vulnerabilities
 Advisory ID: SAUTH-2020-0001
 Advisory URL: https://www.secureauth.com/labs/advisories/sap-hana-saml-assertion-improper-validation-authentication
 Date published: 2020-12-08
-Date of last update: 2020-12-08
+Date of last update: 2021-02-10
 Vendors contacted: SAP
 Release mode: Coordinated release
 
@@ -19,11 +19,11 @@ Release mode: Coordinated release
 
 2. *Vulnerability Information*
 
-Class: Improper Authentication [CWE-287]
+Class: Improper Authentication [CWE-287], Improper Authentication [CWE-287]
 Impact: Security bypass
 Remotely Exploitable: Yes
 Locally Exploitable: Yes
-CVE Name: CVE-2020-26834
+CVE Name: CVE-2020-26834, CVE-2021-21474
 
 
 
@@ -40,7 +40,7 @@ CVE Name: CVE-2020-26834
     
 
 
-        A vulnerability was found in the implementation of Security Assertion
+        Vulnerabilities were found in the implementation of Security Assertion
         Markup Language (SAML)[5] authentication mechanism[6], that can lead to
         improper authentication or authentication bypass scenarios.
     
@@ -54,27 +54,41 @@ CVE Name: CVE-2020-26834
 5. *Vendor Information, Solutions and Workarounds*
 
 
+      For [CVE-2020-26834] SAML Assertion Improper Validation Vulnerability
       SAP published Security Note 2978768[7] that fixed the reported vulnerability.
       The following are potential workarounds we have identified to mitigate or reduce the exploitability
       of the vulnerability found:
     
 
    . 
-          If possible, disable SAP HANA's automatic user creation of unknown users with SAML providers.
-        
+        If possible, disable SAP HANA's automatic user creation of unknown users with SAML providers.
+      
    . 
-          If possible, configure the IdP to issue SAML Assertions using canonicalization methods that include
-          comments.
-        
+        If possible, configure the IdP to issue SAML Assertions using canonicalization methods that include
+        comments.
+      
    . 
-          Make sure TLS is enforced when authenticating to the database or XS(A) applications with SAML.
-        
+        Make sure TLS is enforced when authenticating to the database or XS(A) applications with SAML.
+      
 
+      For [CVE-2021-21474] SAML Assertion Signature Weak MD5 Digest Algorithm Vulnerability
+      SAP published Security Note 2992154[8] that addressed the reported vulnerability.
+      The following are potential workarounds we have identified to mitigate or reduce the exploitability
+      of the vulnerability found:
+    
+
+   . 
+         If possible, configure the IdP to issue SAML Assertions using stronger digest algorithms
+         (e.g. SHA-256).
+      
+   . 
+         Make sure TLS is enforced when authenticating to the database or XS(A) applciations with SAML.
+      
 
 6. *Credits*
 
 
-      The vulnerability was discovered and researched by Martin Gallo from SecureAuth Innovation Labs team.
+      These vulnerabilities were discovered and researched by Martin Gallo from SecureAuth Innovation Labs team.
       The publication of this advisory was coordinated by Leandro Cuozzo from SecureAuth Innovation Labs team.
     
 
@@ -110,7 +124,7 @@ CVE Name: CVE-2020-26834
       
 
 
-        A vulnerability was found in the process implemented in SAP HANA for
+        Vulnerabilities were found in the process implemented in SAP HANA for
         validating the SAML Assertion and its signature.
       
 
@@ -238,17 +252,50 @@ CVE Name: CVE-2020-26834
 
 
         It's also worth mentioning that the SAML Provider can be configured in HANA to
-        automatically provision new users when they are not found in the database[8].
+        automatically provision new users when they are not found in the database[9].
         In this case, the abuse of the vulnerability can allow accessing the database
         with a low-privilege role even if there're no matching users already created in
         the database.
       
 
 
+7.2. *SAML Assertion Signature Weak MD5 Digest Algorithm Vulnerability*
+
+[CVE-2021-21474]
+          SAML 2.0 Assertions are signed using W3C's XML Signature standard[10]. XML
+          Signatures provide integrity, message authentication and signer authentication
+          for the content of the SAML Assertion. In XML Signature, the data to be signed
+          is first digested, the digest value is placed in an element, and that element
+          is digested and cryptographically signed.
+        
+
+
+          Due to the known weaknesses and the lack of collision resistance of the MD5
+          digest algorithm, the latest XML signature specification explicitly removes
+          support of this algorithm. The following statement is included in section 6.2:
+        
+
+
+          "Digest algorithms that are known not to be collision resistant should not be
+          used in DigestMethod elements. For example, the MD5 message digest algorithm
+          should not be used as specific collisions have been demonstrated for that
+          algorithm."
+        
+
+
+          This vulnerability lies in the fact that MD5 is supported as a digest algorithm
+          in SAP HANA's SAML implementation[6]. An attacker who manages to obtain an
+          MD5-digest signed SAML Assertion issued for a SAP HANA instance might be able
+          to tamper with it and alter it in a way that the digest continues to be the
+          same and without invalidating the digital signature.
+        
+
+
 8. *Report Timeline*
 . 2020-08-28:
 
-            SecureAuth sent an initial notification to SAP.
+            SecureAuth sent an initial notification to SAP including a
+            draft version of this advisory.
       
 
 . 2020-08-31:
@@ -259,17 +306,17 @@ CVE Name: CVE-2020-26834
 
 . 2020-09-11:
 
-            SAP confirmed one of the reported vulnerabilities (7.1) and informed
-            us that the fix would be available at the end of November. Additionally,
-            they notified us that the second and the third vulnerability were
-            under revision.
+            SAP confirmed one of the reported vulnerabilities (7.1)
+            [CVE-2020-26834]  and informed us that the fix would
+            be available at the end of November. Additionally, they
+            notified us that the second vulnerability (7.2) was under revision.
       
 
 . 2020-09-15:
 
             SecureAuth acknowledged the confirmation and replied with more
-            information to clarify the situation of the two remaining
-            vulnerabilities.
+            information to clarify the situation of the remaining
+            vulnerability.
       
 
 . 2020-09-16:
@@ -285,45 +332,46 @@ CVE Name: CVE-2020-26834
 
 . 2020-10-07:
 
-            SAP answered confirming the third vulnerability (7.3). However,
-            they haven't yet decided whether this vulnerability will be a security
-            note or a functional note. A similar evaluation is being carried out
-            for vulnerability 7.2.
+            SAP answered confirming the second vulnerability (7.2)
+            [CVE-2021-21474]. However,they haven't yet decided
+            whether this vulnerability will be included in a security
+            note or a functional note.
       
 
 . 2020-10-13:
 
-            SecureAuth thanked the update and clarified that we considered
-            7.2 as a vulnerability.
+            SecureAuth thanked the reply.
       
 
 . 2020-11-02:
 
-            SecureAuth requested an update.
+            SecureAuth requested an update and asked for a tentative
+            release date.
       
 
 . 2020-11-09:
 
             SAP informed us they were still working on the fixes and they
-            aren't going to release the patch in the security patch day of
-            November 10th.
+            aren't going to release the patch in November.
       
 
 . 2020-12-02:
 
-            SecureAuth requested an update.
+            SecureAuth requested a new update.
       
 
 . 2020-12-04:
 
-            SAP informed us they will be publishing a security note "soon" for vulnerability 7.1 and releasing the
-            solutions for the other reported issues next year.
+            SAP informed us they will release the vulnerabilities separately.
+            A security note for vulnerability 7.1 [CVE-2020-26834]
+            will be released "soon" and the fix for 7.2 [CVE-2021-21474]
+            will be publish next year.
       
 
 . 2020-12-04:
 
-            SecureAuth thanked the update and asked whether or not there's a target date for the security
-            note to be released "soon".
+            SecureAuth thanked the update and asked whether or not there's a
+            target date for the security note to be released "soon".
       
 
 . 2020-12-07:
@@ -336,6 +384,46 @@ CVE Name: CVE-2020-26834
             Advisory SAUTH-2020-0001 published.
       
 
+. 2020-12-09:
+
+            SecureAuth informed SAP about the publication of this advisory
+            and asked if they could link their security note with this
+            publication.
+      
+
+. 2020-12-11:
+
+            SAP replied saying they updated their acknowledge section.
+      
+
+. 2020-12-18:
+
+            SAP thanked the SecureAuth advisory publication and the supplementary
+            blogpost, however they informed us that this had very detailed
+            technical information and they prefer that this kind of information
+            will be published only after 3 months of the patch being available.
+      
+
+. 2021-01-13:
+
+            SecureAuth replied explained the spirit of its coordinated
+            disclosure program and the necessity to include technical details
+            about vulnerabilities in order to allow customers to better assess
+            the risk associated with them beyond the patch availability.
+      
+
+. 2021-02-09:
+
+            SAP published Security Note 2992154 addressing the vulnerability
+            7.2 [CVE-2021-21474].
+      
+
+. 2021-02-10:
+
+            SecureAuth updated this advisory including details about
+            vulnerability 7.2 and its related SAP's Security Note.
+      
+
 
 9. *References*
 
@@ -346,7 +434,9 @@ CVE Name: CVE-2020-26834
 [5] https://www.oasis-open.org/committees/security/
 [6] https://help.sap.com/viewer/b3ee5778bc2e4a089d3299b82ec762a7/2.0.05/en-US/db6db355bb571014b56eb25057daec5f.html
 [7] https://launchpad.support.sap.com/#/notes/2978768
-[8] https://help.sap.com/viewer/4fe29514fd584807ac9f2a04f6754767/2.0.05/en-US/20d4cca075191014824eeda2cbba6445.html
+[8] https://launchpad.support.sap.com/#/notes/2992154
+[9] https://help.sap.com/viewer/4fe29514fd584807ac9f2a04f6754767/2.0.05/en-US/20d4cca075191014824eeda2cbba6445.html
+[10] https://www.w3.org/TR/xmldsig-core1/#sec-Overview
 
 
 10. *About Innovation Labs*
