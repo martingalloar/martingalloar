@@ -11,7 +11,7 @@ Title: SAP HANA SAML Improper Validation Vulnerabilities
 Advisory ID: SAUTH-2020-0001
 Advisory URL: https://www.secureauth.com/labs/advisories/sap-hana-saml-assertion-improper-validation-authentication
 Date published: 2020-12-08
-Date of last update: 2021-02-10
+Date of last update: 2021-03-04
 Vendors contacted: SAP
 Release mode: Coordinated release
 
@@ -19,7 +19,7 @@ Release mode: Coordinated release
 
 2. *Vulnerability Information*
 
-Class: Improper Authentication [CWE-287], Improper Authentication [CWE-287]
+Class: Improper Authentication [CWE-287], Improper Authentication [CWE-287], Security Misconfiguration [CWE-1032]
 Impact: Security bypass
 Remotely Exploitable: Yes
 Locally Exploitable: Yes
@@ -37,13 +37,13 @@ CVE Name: CVE-2020-26834, CVE-2021-21474
         Connections to the database are authenticated using different mechanisms,
         which include the integration with multiple Single Sign-On (SSO)
         environments through a variety of protocols[4].
-    
+
 
 
         Vulnerabilities were found in the implementation of Security Assertion
         Markup Language (SAML)[5] authentication mechanism[6], that can lead to
         improper authentication or authentication bypass scenarios.
-    
+
 
 
 4. *Vulnerable Packages*
@@ -54,43 +54,61 @@ CVE Name: CVE-2020-26834, CVE-2021-21474
 5. *Vendor Information, Solutions and Workarounds*
 
 
-      For [CVE-2020-26834] SAML Assertion Improper Validation Vulnerability
-      SAP published Security Note 2978768[7] that fixed the reported vulnerability.
-      The following are potential workarounds we have identified to mitigate or reduce the exploitability
-      of the vulnerability found:
-    
+        For [CVE-2020-26834] SAML Assertion Improper Validation Vulnerability,
+        SAP published Security Note 2978768[7] that fixed the reported vulnerability.
+        The following are potential workarounds we have identified to mitigate or reduce the exploitability
+        of the vulnerability found:
 
-   . 
+
+   .
         If possible, disable SAP HANA's automatic user creation of unknown users with SAML providers.
-      
-   . 
+
+   .
         If possible, configure the IdP to issue SAML Assertions using canonicalization methods that include
         comments.
-      
-   . 
+
+   .
         Make sure TLS is enforced when authenticating to the database or XS(A) applications with SAML.
-      
 
-      For [CVE-2021-21474] SAML Assertion Signature Weak MD5 Digest Algorithm Vulnerability
-      SAP published Security Note 2992154[8] that addressed the reported vulnerability.
-      The following are potential workarounds we have identified to mitigate or reduce the exploitability
-      of the vulnerability found:
-    
 
-   . 
+        For [CVE-2021-21474] SAML Assertion Signature Weak MD5 Digest Algorithm Vulnerability,
+        SAP published Security Note 2992154[8] that addressed the reported vulnerability.
+        The following are potential workarounds we have identified to mitigate or reduce the exploitability
+        of the vulnerability found:
+
+
+   .
          If possible, configure the IdP to issue SAML Assertions using stronger digest algorithms
          (e.g. SHA-256).
-      
-   . 
+
+   .
          Make sure TLS is enforced when authenticating to the database or XS(A) applciations with SAML.
-      
+
+
+         For SAML Assertion Recipient Security Misconfiguration, SAP updated
+         its documentation including notes to validate audience restriction in SAML assertions.
+         Recommended settings are as follows:
+
+
+   .
+         Make sure that the configuration parameter "saml_service_provider_name" is
+         properly set with the name of the SAML Service Provider used by the trusted IdP
+         in the <AudienceRestriction> element.
+
+   .
+         Configure the SAML integration between the trusted IdP and HANA with a unique
+         certificate that is not used to sign assertions for other Service Providers.
+
+   .
+         Make sure TLS is enforced when authenticating to the database or XS(A) applciations with SAML.
+
 
 6. *Credits*
 
 
       These vulnerabilities were discovered and researched by Martin Gallo from SecureAuth Innovation Labs team.
       The publication of this advisory was coordinated by Leandro Cuozzo from SecureAuth Innovation Labs team.
-    
+
 
 
 7. *Technical Description / Proof of Concept Code*
@@ -102,7 +120,7 @@ CVE Name: CVE-2020-26834, CVE-2021-21474
         authenticate users accessing SAP HANA via the SQL interface directly
         (for example, clients using JDBC and ODBC interfaces)[6] or via HTTP to
         XS and XS Advanced applications.
-      
+
 
 
         In this integration scenario, SAP HANA will accept authentication requests
@@ -113,7 +131,7 @@ CVE Name: CVE-2020-26834, CVE-2021-21474
         database and assigning the corresponding X.509 certificate to the
         provider, either via an in-memory certificate collection or a PSE stored
         in the file system.
-      
+
 
 
         In this scenario, it's the client responsibility to handle the process of
@@ -121,12 +139,12 @@ CVE Name: CVE-2020-26834, CVE-2021-21474
         to access the HANA database, the client presents the signed SAML bearer
         assertion. The HANA database validates the assertion and its signature
         before granting access to the user.
-      
+
 
 
         Vulnerabilities were found in the process implemented in SAP HANA for
         validating the SAML Assertion and its signature.
-      
+
 
 
 7.1. *SAML Assertion Improper Validation Vulnerability*
@@ -144,12 +162,12 @@ CVE Name: CVE-2020-26834, CVE-2021-21474
         that mapping can be performed by SAP HANA or provided by the IdP. In the
         latter, the mapping is specified in the SAML Assertion with the inclusion
         of the <@SPProvidedID> attribute of the <NameID> element.
-      
+
 
 
         The following is an example SAML Assertion that can be used to authenticate
         to the SAP HANA's SQL interface, or used as part of SAML's HTTP-POST bindings:
-      
+
 
 
 /-----
@@ -180,7 +198,7 @@ CVE Name: CVE-2020-26834, CVE-2021-21474
             <saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer"/>
           </saml:Subject>
           <saml:Conditions NotBefore="2020-08-26T01:01:48Z" NotOnOrAfter="2020-08-27T01:01:48Z"/>
-        </saml:Assertion> 
+        </saml:Assertion>
 -----/
 
 
@@ -191,7 +209,7 @@ CVE Name: CVE-2020-26834, CVE-2021-21474
         However, the assertion validation code improperly accesses the content of the
         <NameID> element. If the XML element contains comment nodes, the text after the
         comment is not considered.
-      
+
 
 
         An attacker who manages to obtain a signed SAML assertion, either by having
@@ -201,12 +219,12 @@ CVE Name: CVE-2020-26834, CVE-2021-21474
         case where a SAML Assertion was issued for the user "alice.cooper", the attacker
         would be able to insert comments into the SAML Assertion and have it to work
         to access as "alice".
-      
+
 
 
         The next code block shows a tampered SAML Assertion that illustrates how the
         vulnerability can be exploited to get access as a different user account:
-      
+
 
 
 /-----
@@ -237,7 +255,7 @@ CVE Name: CVE-2020-26834, CVE-2021-21474
             <saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer"/>
           </saml:Subject>
           <saml:Conditions NotBefore="2020-08-26T01:01:48Z" NotOnOrAfter="2020-08-27T01:01:48Z"/>
-        </saml:Assertion> 
+        </saml:Assertion>
 -----/
 
 
@@ -248,7 +266,7 @@ CVE Name: CVE-2020-26834, CVE-2021-21474
         while due to the vulnerability the code in charge of validating the assertion
         will take only "alice" as the <NameID> value and grant access to this user
         account instead.
-      
+
 
 
         It's also worth mentioning that the SAML Provider can be configured in HANA to
@@ -256,7 +274,7 @@ CVE Name: CVE-2020-26834, CVE-2021-21474
         In this case, the abuse of the vulnerability can allow accessing the database
         with a low-privilege role even if there're no matching users already created in
         the database.
-      
+
 
 
 7.2. *SAML Assertion Signature Weak MD5 Digest Algorithm Vulnerability*
@@ -267,20 +285,20 @@ CVE Name: CVE-2020-26834, CVE-2021-21474
           for the content of the SAML Assertion. In XML Signature, the data to be signed
           is first digested, the digest value is placed in an element, and that element
           is digested and cryptographically signed.
-        
+
 
 
           Due to the known weaknesses and the lack of collision resistance of the MD5
           digest algorithm, the latest XML signature specification explicitly removes
           support of this algorithm. The following statement is included in section 6.2:
-        
+
 
 
           "Digest algorithms that are known not to be collision resistant should not be
           used in DigestMethod elements. For example, the MD5 message digest algorithm
           should not be used as specific collisions have been demonstrated for that
           algorithm."
-        
+
 
 
           This vulnerability lies in the fact that MD5 is supported as a digest algorithm
@@ -288,141 +306,255 @@ CVE Name: CVE-2020-26834, CVE-2021-21474
           MD5-digest signed SAML Assertion issued for a SAP HANA instance might be able
           to tamper with it and alter it in a way that the digest continues to be the
           same and without invalidating the digital signature.
-        
+
+
+
+7.3. *SAML Assertion Recipient Security Misconfiguration*
+
+        SAML specifications[11] describe the <AudienceRestriction> element as the
+        following in section 2.5.1:
+
+
+
+        "<AudienceRestriction> [Any Number]
+        Specifies that the assertion is addressed to a particular audience."
+
+
+
+        In the same specification, as part of the processing rules in section 2.5.1.4,
+        it includes the following statement:
+
+
+
+        "The audience restriction condition evaluates to Valid if and only if the
+        SAML relying party is a member of one or more of the audiences specified."
+
+
+
+        As mentioned in section 7.1, different SAML Assertion properties are evaluated
+        during the validation. According to HANA's documentation, the SAML's Condition
+        <AudienceRestriction> is validated when present, but it's not required.
+        The validation is implemented in SAP HANA through the use of the configuration
+        parameter "saml_service_provider_name"[12].
+
+
+
+        This security misconfiguration appears when no explicit value is configured for the
+        "saml_service_provider_name" parameter, which is the default for the system database
+        after the SAP HANA installation. When this parameter is configured with an empty value,
+        the validation of the <AudienceRestriction> element is disabled.
+
+
+
+        In this context, an attacker who manages to obtain a SAML Assertion for
+        accessing a different Service Provider, but that was emitted by a SAML IdP that
+        is trusted by SAP HANA, should be able to access the SAP HANA instance by means
+        of presenting the signed SAML Assertion. Even if the SAML Assertion contains an
+        <AudienceRestriction> pointing to a different Service Provider, the validation
+        routine will accept the Assertion and consider it valid.
+
+
+
+        The attack against this misconfiguration is known as Token Recipient Confusion[10],
+        as the Service Provider gets "confused" by the recipient of the SAML assertion
+        and accepts it's as valid even if it wasn't addressed to him. To illustrate the
+        attack, let's assume an attacker manages to access a Service Provider
+        "service.example.com", that is integrated with the same SAML's IdP than a HANA
+        instance ("idp.example.com"), with the identity of the user "alice.cooper".
+        The attacker will then obtain a valid signed SAML Assertion from the IdP that
+        includes the <AudienceRestriction> element and limits the assertion to
+        "service.example.com".
+
+
+
+        The following is an example SAML Assertion, the signature was redacted for the
+        sake of clarity:
+
+
+
+/-----
+        <saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="XXX" Version="2.0" IssueInstant="2020-08-26T01:01:48Z">
+          <saml:Issuer>idp.example.com</saml:Issuer>
+          <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+            [..]
+          </ds:Signature>
+          <saml:Subject>
+            <saml:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">alice.cooper</saml:NameID>
+            <saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer"/>
+          </saml:Subject>
+          <saml:Conditions NotBefore="2020-08-26T01:01:48Z" NotOnOrAfter="2020-08-27T01:01:48Z">
+            <saml:AudienceRestriction>
+              <saml:Audience>service.example.com</saml:Audience>
+            </saml:AudienceRestriction>
+          </saml:Conditions>
+        </saml:Assertion>
+-----/
+
+
+        The attacker then can use this SAML Assertion when connecting to the SAP HANA
+        instance. As the SAML Assertion was issued by a trusted IdP, the signature
+        validation will be successful. The assertion validation routine should identify
+        that the SAML Assertion was restricted to "service.example.com" and not grant
+        access to the user. However, due to the misconfiguration being described, the
+        <AudienceRestriction> element is not validated and thus the attacker would be
+        able to access the SAP HANA instance with the identity of the "alice.cooper"
+        user.
+
 
 
 8. *Report Timeline*
 . 2020-08-28:
 
-            SecureAuth sent an initial notification to SAP including a
+            SecureAuth sends an initial notification to SAP including a
             draft version of this advisory.
-      
+
 
 . 2020-08-31:
 
-            SAP confirmed the reception of the advisory and informed they
-            would submit it to the relevant internal team for validation.
-      
+            SAP confirms the reception of the advisory and informs they
+            will submit it to the relevant internal team for validation.
+
 
 . 2020-09-11:
 
-            SAP confirmed one of the reported vulnerabilities (7.1)
-            [CVE-2020-26834]  and informed us that the fix would
+            SAP confirms one of the reported vulnerabilities (7.1)
+            [CVE-2020-26834]  and informs us that the fix will
             be available at the end of November. Additionally, they
-            notified us that the second vulnerability (7.2) was under revision.
-      
+            notify us that points 7.2 and 7.3 are under review.
+
 
 . 2020-09-15:
 
-            SecureAuth acknowledged the confirmation and replied with more
+            SecureAuth acknowledges the confirmation and replies with more
             information to clarify the situation of the remaining
-            vulnerability.
-      
+            vulnerabilities.
+
 
 . 2020-09-16:
 
-            SAP received our notification and informed us that they would
+            SAP receives our notification and informs us that they will
             analyze the new information.
-      
+
 
 . 2020-10-02:
 
-            SecureAuth asked for an update.
-      
+            SecureAuth asks for an update.
+
 
 . 2020-10-07:
 
-            SAP answered confirming the second vulnerability (7.2)
+            SAP answers confirming the second vulnerability (7.2)
             [CVE-2021-21474]. However,they haven't yet decided
             whether this vulnerability will be included in a security
             note or a functional note.
-      
+
 
 . 2020-10-13:
 
-            SecureAuth thanked the reply.
-      
+            SecureAuth thanks the reply.
+
 
 . 2020-11-02:
 
-            SecureAuth requested an update and asked for a tentative
+            SecureAuth requests an update and asks for a tentative
             release date.
-      
+
 
 . 2020-11-09:
 
-            SAP informed us they were still working on the fixes and they
+            SAP informs us they are still working on the fixes and they
             aren't going to release the patch in November.
-      
+
 
 . 2020-12-02:
 
-            SecureAuth requested a new update.
-      
+            SecureAuth requests a new update.
+
 
 . 2020-12-04:
 
-            SAP informed us they will release the vulnerabilities separately.
+            SAP informs us they will release the vulnerabilities separately.
             A security note for vulnerability 7.1 [CVE-2020-26834]
             will be released "soon" and the fix for 7.2 [CVE-2021-21474]
             will be publish next year.
-      
+
 
 . 2020-12-04:
 
-            SecureAuth thanked the update and asked whether or not there's a
+            SecureAuth thanks the update and asks whether or not there's a
             target date for the security note to be released "soon".
-      
+
 
 . 2020-12-07:
 
-            SAP informed us the security note is expected to be released Dec 8th.
-      
+            SAP informs us the security note is expected to be released Dec 8th.
+
 
 . 2020-12-08:
 
             Advisory SAUTH-2020-0001 published.
-      
+
 
 . 2020-12-09:
 
-            SecureAuth informed SAP about the publication of this advisory
-            and asked if they could link their security note with this
+            SecureAuth informs SAP about the publication of this advisory
+            and asks if they could link their security note with this
             publication.
-      
+
 
 . 2020-12-11:
 
-            SAP replied saying they updated their acknowledge section.
-      
+            SAP replies saying that they updated the acknowledge section.
+
 
 . 2020-12-18:
 
-            SAP thanked the SecureAuth advisory publication and the supplementary
-            blogpost, however they informed us that this had very detailed
+            SAP thanks the SecureAuth advisory publication and the supplementary
+            blogpost, however they inform us that this has very detailed
             technical information and they prefer that this kind of information
-            will be published only after 3 months of the patch being available.
-      
+            be released only after 3 months of the patch being available.
+
 
 . 2021-01-13:
 
-            SecureAuth replied explained the spirit of its coordinated
+            SecureAuth replies explaining the spirit of its coordinated
             disclosure program and the necessity to include technical details
             about vulnerabilities in order to allow customers to better assess
             the risk associated with them beyond the patch availability.
-      
+
 
 . 2021-02-09:
 
-            SAP published Security Note 2992154 addressing the vulnerability
+            SAP publishes Security Note 2992154 addressing the vulnerability
             7.2 [CVE-2021-21474].
-      
+
 
 . 2021-02-10:
 
-            SecureAuth updated this advisory including details about
-            vulnerability 7.2 and its related SAP's Security Note.
-      
+            SecureAuth updates this advisory including details about
+            vulnerability 7.2 [CVE-2021-21474] and the related
+            SAP Security Note.
+
+
+. 2021-02-11:
+
+            SecureAuth notifies SAP about the advisory update and asks
+            for news about point 7.3.
+
+
+. 2021-02-11:
+
+            SAP informs us that they don't consider 7.3 as a security
+            vulnerability but as a misconfiguration. To address it,
+            they modified the documentation including notes with
+            recommended settings.
+
+
+. 2021-03-03:
+
+            SecureAuth updates this advisory including details about
+            security misconfiguration 7.3.
+
 
 
 9. *References*
@@ -437,6 +569,8 @@ CVE Name: CVE-2020-26834, CVE-2021-21474
 [8] https://launchpad.support.sap.com/#/notes/2992154
 [9] https://help.sap.com/viewer/4fe29514fd584807ac9f2a04f6754767/2.0.05/en-US/20d4cca075191014824eeda2cbba6445.html
 [10] https://www.w3.org/TR/xmldsig-core1/#sec-Overview
+[11] https://www.oasis-open.org/committees/download.php/35711/sstc-saml-core-errata-2.0-wd-06-diff.pdf
+[12] https://help.sap.com/viewer/009e68bc5f3c440cb31823a3ec4bb95b/2.0.05/en-US/f1b759affa5f444992736273afb7d9fe.html#loiof1b759affa5f444992736273afb7d9fe__configSPS05_id_258
 
 
 10. *About Innovation Labs*
@@ -451,7 +585,7 @@ CVE Name: CVE-2020-26834, CVE-2021-21474
       regularly publish security advisories, primary research, technical publications,
       research blogs, project information, and shared software tools for public use at
       http://www.secureauth.com/labs.
-    
+
 
 
 11. *About SecureAuth*
