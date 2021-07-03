@@ -1,14 +1,18 @@
-Hi there! I'm Martin Gallo!
+Hi there! I'm [Martin Gallo](https://www.linkedin.com/in/mgallo/)!
+
+Experienced Information Security professional and leader. Security, privacy, usability and diversity advocate.
+
+Currently Sr. Director of Research [@SecureAuth](https://www.secureauth.com/) / Founder and co-organizer [@TandilSec](https://www.meetup.com/TandilSec) / Technical Comitte [@ekoparty](https://ekoparty.org/)
 
 
-# Publications
+## Publications
 
 This is my personal repository of publications and presentation at public conferences.
 
 <details>
   <summary>Conference Presentations</summary>
   
-## Conference Presentations
+### Conference Presentations
 
 | Presentation Title | Conference | Presentation Date |
 | --- | --- | --- |
@@ -25,7 +29,7 @@ This is my personal repository of publications and presentation at public confer
 <details>
   <summary>Security Advisories</summary>
   
-## Security Advisories
+### Security Advisories
 
 | Title | CVEs | Release Date |
 | --- | --- | --- |
