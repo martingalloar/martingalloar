@@ -5,9 +5,9 @@ Hi there! I'm Martin Gallo!
 
 This is my personal repository of publications and presentation at public conferences.
 
-* [Conference Presentations](#conference-presentations)
-* [Security Advisories](#security-advisories)
-
+<details>
+  <summary>Conference Presentations</summary>
+  
 ## Conference Presentations
 
 | Presentation Title | Conference | Presentation Date |
@@ -20,6 +20,11 @@ This is my personal repository of publications and presentation at public confer
 | [Uncovering SAP vulnerabilities - Reversing and breaking the Diag protocol](presentations/2012-BruCon/MartinGallo-BruCon12.pdf) | [BruCon 2012](http://2012.brucon.org/index.php/Talks_and_workshops.html#Martin_Gallo_-_Uncovering_SAP_vulnerabilities:_dissecting_and_breaking_the_Diag_protocol) | September 2012 |
 | [Uncovering SAP vulnerabilities - Reversing and breaking the Diag protocol](presentations/2012-Defcon/MartinGallo-Defcon20.pdf) | [Defcon 20](https://www.defcon.org/html/links/dc-archives/dc-20-archive.html#Gallo) | July 2012 |
 
+</details>
+
+<details>
+  <summary>Security Advisories</summary>
+  
 ## Security Advisories
 
 | Title | CVEs | Release Date |
@@ -35,3 +40,5 @@ This is my personal repository of publications and presentation at public confer
 | [CORE-2014-0003](advisories/CORE-2014-0003.txt) / [SAP Router Password Timing Attack](https://www.coresecurity.com/advisories/sap-router-password-timing-attack) | [CVE-2014-0984](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2014-0984) | 15/04/2014 |
 | [CORE-2012-1128](advisories/CORE-2012-1128.txt) / [SAP Netweaver Message Server Multiple Vulnerabilities](https://www.coresecurity.com/content/SAP-netweaver-msg-srv-multiple-vulnerabilities) | [CVE-2013-1592](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2013-1592), [CVE-2013-1593](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2013-1593) | 13/02/2013 |
 | [CORE-2012-0123](advisories/CORE-2012-0123.txt) / [SAP Netweaver Dispatcher Multiple Vulnerabilities](https://www.coresecurity.com/content/sap-netweaver-dispatcher-multiple-vulnerabilities) | [CVE-2012-2611](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2012-2611), [CVE-2012-2612](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2012-2612), [CVE-2012-2511](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2012-2511), [CVE-2012-2512](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2012-2512), [CVE-2012-2513](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2012-2513), [CVE-2012-2514](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2012-2514) | 08/05/2012 |
+
+</details>
