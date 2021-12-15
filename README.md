@@ -14,7 +14,7 @@ This is my personal repository of publications and presentation at public confer
 
 | Presentation Title | Conference | Presentation Date |
 | --- | --- | --- |
-| Recent Identity Threats and Trends: Lessons to improve Identity Security | [Identiverse 2021](https://identiverse.com/idv2021/session/SESBFYZAW9BIU3GDM/) | June 2021 |
+| [Recent Identity Threats and Trends: Lessons to improve Identity Security](presentations/2021-Identiverse/IDV21-Recent-Identity-Threats-and-Trends.pdf) | [Identiverse 2021](https://identiverse.com/idv2021/session/SESBFYZAW9BIU3GDM/) | June 2021 |
 | [Hunting crypto secrets in SAP systems](presentations/2018-Troopers/TR18-Hunting-crypto-secrets-in-SAP-systems-vFinal.pdf) | [Troopers 18](https://www.troopers.de/troopers18/agenda/fzzux9/) | March 2018 |
 | [Intercepting SAP SNC-protected traffic](presentations/2017-Troopers/TR17-Intercepting-SNC-protected-traffic.pdf) | [Troopers 17](https://www.troopers.de/troopers17/talks/763-intercepting-sap-snc-protected-traffic/) | March 2017 |
 | [Deep-dive into SAP archive file formats](presentations/2016-Troopers/SAPCarTalk-Slides.pdf) | [Troopers 16](https://www.troopers.de/events/troopers16/628_deep-dive_into_sap_archive_file_formats/) | March 2016 |
