@@ -1,6 +1,6 @@
 🙌 I'm [Martin Gallo](https://www.linkedin.com/in/mgallo/)! Experienced information security professional and leader. Security, privacy, usability and diversity advocate.
 
-👨‍💼 Currently Sr. Director of Research [@SecureAuth](https://www.secureauth.com/) / 👨‍💻 Founder and co-organizer [@TandilSec](https://www.meetup.com/TandilSec) / 🕵️‍ Technical Comitte [@ekoparty](https://ekoparty.org/)
+👨‍💻 Founder and co-organizer [@TandilSec](https://www.meetup.com/TandilSec) / 🕵️‍ Technical Comitte [@ekoparty](https://ekoparty.org/)
 
 
 ## Publications
