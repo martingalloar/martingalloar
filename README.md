@@ -1,7 +1,6 @@
 🙌 I'm [Martin Gallo](https://www.linkedin.com/in/mgallo/)! Experienced information security professional and leader. Security, privacy, usability and diversity advocate.
 
-👨‍💻 Founder and co-organizer [@TandilSec](https://www.meetup.com/TandilSec) / 🕵️‍ Technical Comitte [@ekoparty](https://ekoparty.org/)
-
+👨🏾‍💻 Senior Product Manager at [@HYPR-Corp-Public](https://www.hypr.com/) | 🙆 Founder and co-organizer at [@TandilSec](https://www.meetup.com/TandilSec) | 🕵️‍ Technical Comitte [@ekoparty](https://ekoparty.org/)
 
 ## Publications
 
