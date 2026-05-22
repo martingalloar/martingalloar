@@ -1,6 +1,23 @@
-🙌 I'm [Martin Gallo](https://www.linkedin.com/in/mgallo/)! Experienced information security professional and leader. Security, privacy, usability and diversity advocate.
+🙌 I'm [Martin Gallo](https://www.linkedin.com/in/mgallo/)! Experienced cybersecurity professional and leader. Security, privacy, usability and diversity advocate.
 
-👨🏾‍💻 Senior Product Manager at [@HYPRCorp](https://www.hypr.com/) | 🙆 Founder and co-organizer at [@TandilSec](https://www.meetup.com/TandilSec) | 🕵️‍ Technical Comitte [@ekoparty](https://ekoparty.org/)
+👨🏾‍💻 Director of Product Management [@AuthMind](https://authmind.com/) | 🙆 Founder and co-organizer [@TandilSec](https://www.meetup.com/TandilSec) | 🕵️‍ Technical Comitte [@ekoparty](https://ekoparty.org/)
+
+
+## Bio
+
+<details>
+
+I am a cybersecurity leader with deep expertise in offensive security, identity security, authentication, IAM, and vulnerability/threat management.
+
+My career spans hands-on offensive security, security research, advisory roles, and executive-level leadership. I began in penetration testing and advanced security assessments, including roles at a Big Four firm and as a senior consultant at Core Security, where I served as both practitioner and subject matter expert. This technical foundation continues to shape my approach: security decisions must be grounded in real-world attack paths, not theoretical compliance.
+
+Over time, I expanded into broader security and product leadership roles, guiding cross-functional teams, influencing security architecture decisions, and aligning cybersecurity initiatives with business outcomes. I have represented organizations in global standards bodies such as the OpenID Foundation and the FIDO Alliance, contributing to the evolution of modern authentication and identity frameworks.
+
+Beyond corporate roles, I serve as an independent advisor in cybersecurity and identity security, supporting executive teams in strengthening security posture, improving threat modeling maturity, and refining product management strategies.
+
+I am deeply committed to advancing the security community. I co-founded TandilSec, actively engage with international InfoSec communities, and collaborate with initiatives such as EkoParty, Latin America’s leading cybersecurity conference. My work spans research, open-source contributions, conference speaking, and expert panels.
+
+</details>
 
 ## Publications
 
