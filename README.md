@@ -1,6 +1,6 @@
 🙌 I'm [Martin Gallo](https://www.linkedin.com/in/mgallo/)! Experienced cybersecurity professional and leader. Security, privacy, usability and diversity advocate.
 
-👨🏾‍💻 Director of Product Management [@AuthMind](https://authmind.com/) | 🙆 Founder and co-organizer [@TandilSec](https://www.meetup.com/TandilSec) | 🕵️‍ Technical Comitte [@ekoparty](https://ekoparty.org/)
+🙆 Founder and co-organizer [@TandilSec](https://www.meetup.com/TandilSec) | 🕵️‍ Technical Comitte [@ekoparty](https://ekoparty.org/)
 
 
 ## Bio
