@@ -1,63 +1,17 @@
-🙌 I'm [Martin Gallo](https://www.linkedin.com/in/mgallo/)! Experienced cybersecurity professional and leader. Security, privacy, usability and diversity advocate.
-
-🙆 Founder and co-organizer [@TandilSec](https://www.meetup.com/TandilSec) | 🕵️‍ Technical Comitte [@ekoparty](https://ekoparty.org/)
-
+🙌 I'm [Martin Gallo](https://martingallo.ar/)! Hacker turned into cybersecurity professional. My focus areas are offensive security, security research, product management and identity security.
 
 ## Bio
 
-<details>
+I am a hacker turned into cybersecurity professional with a career spanning offensive security, security research, product management, and identity security.
 
-I am a cybersecurity leader with deep expertise in offensive security, identity security, authentication, IAM, and vulnerability/threat management.
+I began my career conducting penetration tests and advanced security assessments, including roles at a Big Four firm and Core Security. Alongside my consulting work, I contributed security research, developed open-source tools, and presented my findings at industry conferences. This technical foundation continues to shape how I approach security, products, and leadership: understanding how systems break in the real world is essential to making better decisions.
 
-My career spans hands-on offensive security, security research, advisory roles, and executive-level leadership. I began in penetration testing and advanced security assessments, including roles at a Big Four firm and as a senior consultant at Core Security, where I served as both practitioner and subject matter expert. This technical foundation continues to shape my approach: security decisions must be grounded in real-world attack paths, not theoretical compliance.
+Over time, I expanded into product and leadership roles within cybersecurity startups. I have led cross-functional teams, influenced product and security architecture decisions, and helped translate complex technical challenges into products and strategies aligned with customer and business needs.
 
-Over time, I expanded into broader security and product leadership roles, guiding cross-functional teams, influencing security architecture decisions, and aligning cybersecurity initiatives with business outcomes. I have represented organizations in global standards bodies such as the OpenID Foundation and the FIDO Alliance, contributing to the evolution of modern authentication and identity frameworks.
+Identity security, authentication, and IAM have become important areas of my work. I have represented organizations in the OpenID Foundation and the FIDO Alliance, participating in industry efforts around modern identity and authentication standards.
 
-Beyond corporate roles, I serve as an independent advisor in cybersecurity and identity security, supporting executive teams in strengthening security posture, improving threat modeling maturity, and refining product management strategies.
-
-I am deeply committed to advancing the security community. I co-founded TandilSec, actively engage with international InfoSec communities, and collaborate with initiatives such as EkoParty, Latin America’s leading cybersecurity conference. My work spans research, open-source contributions, conference speaking, and expert panels.
-
-</details>
+Today, I advise organizations on cybersecurity, identity, and product strategy. I also remain actively involved in the security community through research, open-source contributions, conference speaking, and community initiatives. I co-founded TandilSec and have collaborated with organizations and events including OWASP and EkoParty as part of the technical comittee.
 
 ## Publications
 
-This is my personal repository of publications and presentation at public conferences.
-
-<details>
-  <summary>Conference Presentations</summary>
-
-### Conference Presentations
-
-| Presentation Title | Conference | Presentation Date |
-| --- | --- | --- |
-| [Recent Identity Threats and Trends: Lessons to improve Identity Security](presentations/2021-Identiverse/IDV21-Recent-Identity-Threats-and-Trends.pdf) | [Identiverse 2021](https://identiverse.com/idv2021/session/SESBFYZAW9BIU3GDM/) | June 2021 |
-| [Hunting crypto secrets in SAP systems](presentations/2018-Troopers/TR18-Hunting-crypto-secrets-in-SAP-systems-vFinal.pdf) | [Troopers 18](https://www.troopers.de/troopers18/agenda/fzzux9/) | March 2018 |
-| [Intercepting SAP SNC-protected traffic](presentations/2017-Troopers/TR17-Intercepting-SNC-protected-traffic.pdf) | [Troopers 17](https://www.troopers.de/troopers17/talks/763-intercepting-sap-snc-protected-traffic/) | March 2017 |
-| [Deep-dive into SAP archive file formats](presentations/2016-Troopers/SAPCarTalk-Slides.pdf) | [Troopers 16](https://www.troopers.de/events/troopers16/628_deep-dive_into_sap_archive_file_formats/) | March 2016 |
-| [HoneySAP: Who really wants your money?](presentations/2015-Troopers/HoneySAP-Slides.pdf) | [Troopers 15](https://www.troopers.de/events/troopers15/270_honeysap_who_really_wants_your_money/) | March 2015 |
-| [SAP’s Network Protocols Revisited](presentations/2014-Troopers) | [Troopers 14](https://www.troopers.de/events/troopers14/40_saps_network_protocols_revisited/) | March 2014 |
-| [Uncovering SAP vulnerabilities - Reversing and breaking the Diag protocol](presentations/2012-BruCon/MartinGallo-BruCon12.pdf) | [BruCon 2012](http://2012.brucon.org/index.php/Talks_and_workshops.html#Martin_Gallo_-_Uncovering_SAP_vulnerabilities:_dissecting_and_breaking_the_Diag_protocol) | September 2012 |
-| [Uncovering SAP vulnerabilities - Reversing and breaking the Diag protocol](presentations/2012-Defcon/MartinGallo-Defcon20.pdf) | [Defcon 20](https://www.defcon.org/html/links/dc-archives/dc-20-archive.html#Gallo) | July 2012 |
-
-</details>
-
-<details>
-  <summary>Security Advisories</summary>
-
-### Security Advisories
-
-| Title | CVEs | Release Date |
-| --- | --- | --- |
-| [SAUTH-2020-0001](advisories/SAUTH-2020-0001.txt) / [SAP HANA SAML Assertion Improper Validation Vulnerability](https://www.secureauth.com/labs/advisories/sap-hana-saml-assertion-improper-validation-authentication) | [CVE-2020-26834](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-26834), [CVE-2021-21474](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-21474) | 09/12/2020 |
-| [CORE-2017-0011](advisories/CORE-2017-0011.txt) / [SAP Note Assistant Insecure Handling of SAP Notes Signature Vulnerability](https://www.coresecurity.com/advisories/sap-note-assistant-insecure-handling-sap-notes-signature-vulnerability) | [CVE-2017-16691](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2017-16691) | 30/11/2017 |
-| [CORE-2017-0001](advisories/CORE-2017-0001.txt) / [SAP SAPCAR Heap Based Buffer Overflow Vulnerability](https://www.coresecurity.com/advisories/sap-sapcar-heap-based-buffer-overflow-vulnerability) | [CVE-2017-8852](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2017-8852) | 10/05/2017 |
-| [CORE-2016-0006](advisories/CORE-2016-0006.txt) / [SAP CAR Multiple Vulnerabilities](https://www.coresecurity.com/advisories/sap-car-multiple-vulnerabilities) | [CVE-2016-5845](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2016-5845), [CVE-2016-5847](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2016-5847) | 10/08/2016 |
-| [CORE-2016-0004](advisories/CORE-2016-0004.txt) / [SAP Download Manager Password Weak Encryption](https://www.coresecurity.com/advisories/sap-download-manager-password-weak-encryption) | [CVE-2016-3685](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2016-3685), [CVE-2016-3684](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2016-3684) | 09/03/2016 |
-| [CORE-2015-0010](advisories/CORE-2015-0010.txt) / [Sendio ESP Information Disclosure Vulnerability](https://www.coresecurity.com/advisories/sendio-esp-information-disclosure-vulnerability) | [CVE-2014-0999](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2014-0999), [CVE-2014-8391](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2014-8391) | 22/05/2015 |
-| [CORE-2015-0009](advisories/CORE-2015-0009.txt) / [SAP LZC/LZH Compression Multiple Vulnerabilities](https://www.coresecurity.com/advisories/sap-lzc-lzh-compression-multiple-vulnerabilities) | [CVE-2015-2282](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2015-2282), [CVE-2015-2278](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2015-2278) | 12/05/2015 |
-| [CORE-2014-0007](advisories/CORE-2014-0007.txt) / [SAP Netweaver Enqueue Server Trace Pattern Denial of Service Vulnerability](https://www.coresecurity.com/advisories/sap-netweaver-enqueue-server-trace-pattern-denial-service-vulnerability) | [CVE-2014-0995](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2014-0995) | 15/10/2014 |
-| [CORE-2014-0003](advisories/CORE-2014-0003.txt) / [SAP Router Password Timing Attack](https://www.coresecurity.com/advisories/sap-router-password-timing-attack) | [CVE-2014-0984](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2014-0984) | 15/04/2014 |
-| [CORE-2012-1128](advisories/CORE-2012-1128.txt) / [SAP Netweaver Message Server Multiple Vulnerabilities](https://www.coresecurity.com/content/SAP-netweaver-msg-srv-multiple-vulnerabilities) | [CVE-2013-1592](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2013-1592), [CVE-2013-1593](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2013-1593) | 13/02/2013 |
-| [CORE-2012-0123](advisories/CORE-2012-0123.txt) / [SAP Netweaver Dispatcher Multiple Vulnerabilities](https://www.coresecurity.com/content/sap-netweaver-dispatcher-multiple-vulnerabilities) | [CVE-2012-2611](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2012-2611), [CVE-2012-2612](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2012-2612), [CVE-2012-2511](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2012-2511), [CVE-2012-2512](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2012-2512), [CVE-2012-2513](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2012-2513), [CVE-2012-2514](https://cve.mitre.org/cgi-bin/cvename.cgi?name=2012-2514) | 08/05/2012 |
-
-</details>
+I keep a [personal website](https://martingallo.ar) where I post my research and writing on offensive security, identity security and IAM — authentication, passkeys, phishing-resistant MFA — and SAP security: posts, conference talks, advisories, and tools.
