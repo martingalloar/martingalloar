@@ -1,4 +1,4 @@
-🙌 I'm [Martin Gallo](https://martingallo.ar/)! Hacker turned into cybersecurity professional. My focus areas are offensive security, security research, product management and identity security.
+🙌 I'm [Martin Gallo](https://martingallo.ar/)! Hacker turned into cybersecurity professional, focused on product management, identity security, offensive security and security research.
 
 ## Bio
 
